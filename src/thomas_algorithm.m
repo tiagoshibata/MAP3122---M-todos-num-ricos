@@ -5,7 +5,7 @@ function x = thomas_algorithm(M, d)
 
 	% Pré-processamento
 	n = length(M);
-	if size(M, 3) == 3
+	if size(M, 2) == 3
 		a = M(:, 1);
 		b = M(:, 2);
 		c = M(:, 3);

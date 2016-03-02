@@ -25,4 +25,11 @@ function test_thomas
 
 	display('Soma dos erros absolutos:');
 	display(sum(sum(abs(our_sol - system_sol))));
+
+	our_sol = thomas_algorithm([a b c], d);
+	display('Solução da implementação do trabalho em formato de 3 colunas:');
+	display(our_sol);
+
+	display('Soma dos erros absolutos:');
+	display(sum(sum(abs(our_sol - system_sol))));
 end

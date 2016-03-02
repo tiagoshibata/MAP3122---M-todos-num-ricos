@@ -1,0 +1,38 @@
+# Created by Octave 3.8.1, Tue Feb 23 20:09:32 2016 BRT <ubuntu@ubuntu-virtual-box>
+# name: parameters
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 6
+# name: k
+# type: scalar
+1
+
+
+# name: ro
+# type: scalar
+1
+
+
+# name: cp
+# type: scalar
+1
+
+
+# name: alpha
+# type: scalar
+1
+
+
+# name: length
+# type: scalar
+0.01
+
+
+# name: subdiv
+# type: scalar
+100
+
+
+
+

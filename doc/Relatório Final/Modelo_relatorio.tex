@@ -66,6 +66,16 @@ Nesse trabalho, desejamos simular a condução de calor em uma barra ou placa a 
 	\item Último parágrafo deve conter a organização do documento
 \end{itemize}
 
+\section{Modelo}
+Em nosso modelo, a placa plana será discretizada em múltiplos quadrados de dimensão pequena. Cada pequeno quadrado será a menor subdivisão da placa que trataremos e possuirá uma temperatura homogênea. Essa resolução é baseada nos métodos de elementos finitos, onde uma subdivisão fina e finita de uma peça permite aproximações numéricas de fenômenos em objetos complexos e difíceis de resolver analiticamente. No entanto, em elementos finitos cada elemento é geralmente representado por uma forma não uniforme. Nesse trabalho, os elementos serão uniformes, bidimensionais e retangulares, sempre.
+
+As condições iniciais serão tomadas como temperatura homogênea em toda a placa (placa desligada e equilibrada). O calor gerado pelos componentes será tomado de seus datasheets e seu número e posições será configurável. Utiliza-se o modelo de placa bidimensional, homogênea e isotrópica, ou seja, suas propriedades não se alteram em diferentes direções ou posições e a condução térmica é constante em toda a sua extensão.
+
+O fluxo de energia térmica, que indica locais com grande variação (gradiente) de temperatura, é proporcional ao inverso do gradiente da temperatura (os operandos de u(x, y, t) foram omitidos por simplicidade) \cite{ufsc_geracao_de_calor}:
+
+\[q = -k A \Delta u\]
+
+
 \section{Exemplos de Equações}
 Nesta seção serão apresentados diferentes exemplos de equações.
 
@@ -73,9 +83,6 @@ Nesta seção serão apresentados diferentes exemplos de equações.
 
 \textbf{Sem numeração}
 \[\sum_{i=1}^{100}\frac{2^{i-1}}{4}\]
-
-
-
 
 \textbf{Com numeração}
 \begin{equation}
@@ -124,9 +131,6 @@ Referenciando a equação ~(\ref{pp})
 \label{eqpc0}
 \end{equation}
 
-
-
-
 \[
 d_i=\left \{
 \begin{array}{cc}
@@ -135,9 +139,6 @@ d_i=\left \{
 \end{array}
 \right \}
 \]
-
-
-
 
 %inicia uma nova p�gina
 \clearpage
@@ -177,10 +178,6 @@ PDS-20    &   15 & 5  &  625519 & 7123636\\\hline
 
 Referenciando a tabela~\ref{tabn}.
 
-
-
-
-
 \section{Edição}
 
 Comando para preservar a formatação do texto.
@@ -203,10 +200,7 @@ void main(void)             // ''main'' method always called first.
 
 %\clearpage %come�a nova p�gina
 
-
 Para citar referências bibliográficas~\cite{Adler89}, \cite{Carmo05}.
-
-
 
 \section{Conclusões}
 Apresentar as conclusões finais.
@@ -215,9 +209,8 @@ Apresentar as conclusões finais.
 {\bf{Agradecimentos}} Agradecimentos aos colaboradores, professores que eventualmente procuraram para ajudar em
 algum aspecto do modelo, colega que ajudou a compor alguma parte do trabalho e assim por diante.
 
-%Incluindo refer�ncias bibliogr�ficas
-\bibliographystyle{plain} %define o estilo
-\bibliography{bibliografia} %busca o arquivo
+\bibliographystyle{plain}
+\bibliography{bibliografia}
 
 % aqui, viriam os ap�ndices se viessem (fica como atividade descobrir como introduz�-los
 

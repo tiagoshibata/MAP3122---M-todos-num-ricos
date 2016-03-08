@@ -8,7 +8,8 @@ function load_parameters(print)
 		load('parameters.mat');
 	else
 		display('Parâmetros não encontrados, usando valores padrões.');
-		parameters = struct('k', 1, 'ro', 1, 'cp', 1, 'alpha', [], 'length', 0.01, 'subdiv', 10);
+		parameters = struct('k', 1, 'ro', 1, 'cp', 1, 'alpha', [], 'length', 0.01,
+			'subdiv', 10, 'timestep', 1e-3);
 	end
 	parameters.alpha = parameters.k / (parameters.ro * parameters.cp);
 
@@ -20,5 +21,6 @@ function load_parameters(print)
 		display(sprintf('alpha = α (coeficiente de difusão térmica) = %e [W * m² / J]', parameters.alpha));
 		display(sprintf('length = Extensão da barra/placa simulada = %e [m]', parameters.length));
 		display(sprintf('subdiv = Subdivisões em uma dimensão = %e', parameters.subdiv));
+		display(sprintf('timestep = Passo de tempo = %e', parameters.timestep));
 	end
 end

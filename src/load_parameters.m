@@ -7,9 +7,9 @@ function load_parameters(print)
 	if exist('parameters.mat', 'file') == 2
 		load('parameters.mat');
 	else
-		display('Parâmetros não encontrados, usando valores padrões.');
-		parameters = struct('k', 1, 'ro', 1, 'cp', 1, 'alpha', [], 'length', 0.01,
-			'subdiv', 10, 'timestep', 1e-3);
+		% Usar alguns valores padrões
+		parameters = struct('k', 1, 'ro', 1, 'cp', 1, 'alpha', [], 'length', 0.01, ...
+			'subdiv', 10, 'timestep', 1e-4, 'end_time', 5);
 	end
 	parameters.alpha = parameters.k / (parameters.ro * parameters.cp);
 
@@ -22,5 +22,6 @@ function load_parameters(print)
 		display(sprintf('length = Extensão da barra/placa simulada = %e [m]', parameters.length));
 		display(sprintf('subdiv = Subdivisões em uma dimensão = %e', parameters.subdiv));
 		display(sprintf('timestep = Passo de tempo = %e', parameters.timestep));
+		display(sprintf('end_time = Tempo total de simulação = %e', parameters.end_time));
 	end
 end

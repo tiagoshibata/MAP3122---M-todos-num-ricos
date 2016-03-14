@@ -7,7 +7,7 @@ function test_thomas
 	c = [rand(n - 1, 1) ; 0];
 	d = rand(n, 1);
 
-	M = [zeros(1, n) ; eye(n - 1, n)] .* a + eye(n) .* b + [zeros(n, 1) eye(n, n - 1)] .* c;
+	M = build_tridiagonal(a, b, c);
 	display('Sistema a ser testado:');
 	display('M * x = d');
 	display('M =');

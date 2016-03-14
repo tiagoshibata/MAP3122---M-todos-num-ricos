@@ -7,7 +7,6 @@ function test_laplacian
 	display('Laplaciano calculado para x² + y²:');
 	lap = laplacian(U, 1);
 	display(lap);
-	display('Soma de erros para a implementação da linguagem (desconsiderando borda):');
 	errors = abs(4 * del2(U)(2:end - 1, 2:end - 1) - lap(2:end - 1, 2:end - 1));
-	display(sprintf('%.9E', sum(sum(errors))));
+	display(sprintf('Soma de erros para a implementação da linguagem (desconsiderando borda): %.9E', sum(sum(errors))));
 end

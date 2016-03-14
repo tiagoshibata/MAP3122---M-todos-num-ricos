@@ -1,3 +1,8 @@
-Modelo_relatorio.pdf
+Relatório_Final_MAP3122.pdf
+revision.tex
 *.aux
+*.bbl
+*.blg
 *.log
+*.toc
+*-converted-to.pdf

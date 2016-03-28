@@ -139,7 +139,7 @@ Portanto podemos aproximar a derivada em um ponto médio a dois de valores conhe
 
 \[|erro| \leq |\max_{x \leq \xi_{max} \leq x + \Delta x} u''(\xi_{max}) \frac{\Delta x}{8} - \min_{x \leq \xi_{min} \leq x + \Delta x} u''(\xi_{min}) \frac{\Delta x}{8}|\]
 
-Com $\xi_{max}$ e $\xi_{min}$ como valores onde $u''$ é máximo e mínimo entre $x$ e $x + \Delta x$. Para $\frac{\Delta x}{8}$ pequeno, a aproximação será boa. Além disso, o problema de condução de calor tende a $u'' = 0$ (temperatura crescendo/decrescendo uniformemente), portanto esperamos que $u''$ seja pequeno conforme a simulação avança.
+Com $\xi_{max}$ e $\xi_{min}$ como valores onde $u''$ é máximo e mínimo entre $x$ e $x + \Delta x$. Para $\frac{\Delta x}{8}$ pequeno, a aproximação será boa. Além disso, o problema de condução de calor tende a $u'' = 0$ (temperatura crescendo/decrescendo uniformemente), portanto esperamos que $u''$ seja pequeno conforme a simulação avança. O erro da simulação inclui também um erro pela discretização no tempo (pois buscamos $u(x, t + \Delta t)$, mas o polinômio de Taylor com duas dimensões não será descrito por ser muito longo.
 
 De posse de aproximações boas para $u'(x - \frac{\Delta x}{2})$ e $u'(x + \frac{\Delta x}{2})$, podemos calcular a derivada nos pontos de estudo ($u'(x)$) pela média entre as derivadas ($\frac{u'(x - \frac{\Delta x}{2}) + u'(x + \frac{\Delta x}{2})}{2}$). Aplicando expansão em série de Taylor $u'$ em torno de $x$, temos um sistema semelhante a \ref{expansao_taylor_derivada}:
 
@@ -172,20 +172,28 @@ Comparamos os resultados com a função de aproximação da derivada do ambiente
 
 Para formular a aproximação da segunda derivada, também fizemos expansão em polinômio de Taylor com resto de Lagrange:
 
+\[
 \begin{array}{rcl}
 	u(x + \Delta x, t) & = & u(x, t) + \frac{\partial u}{\partial x}(x, t) \Delta x + \frac{\partial^2 u}{\partial x^2}(x, t) \frac{\Delta x ^ 2}{2} + \frac{\partial^3 u}{\partial x^3}(x, t) \frac{\Delta x ^ 3}{6} + \frac{\partial^4 u}{\partial x^4}(\xi_1, t) \frac{\Delta x ^ 4}{24} \\ \\
 	u(x - \Delta x, t) & = & u(x, t) - \frac{\partial u}{\partial x}(x, t) \Delta x + \frac{\partial^2 u}{\partial x^2}(x, t) \frac{\Delta x ^ 2}{2} - \frac{\partial^3 u}{\partial x^3}(x, t) \frac{\Delta x ^ 3}{6} + \frac{\partial^4 u}{\partial x^4}(\xi_2, t) \frac{\Delta x ^ 4}{24}
 \end{array}
+\]
 
 De maneira similar a feira para a primeira derivada, somando as equações, rearranjando os termos e majorando $\xi_1$ e $\xi_2$, obtemos:
 
-\[|erro| \leq \max_{x \leq \xi_{max} \leq x + \Delta x} u''(\xi_{max}) \frac{\Delta x}{8} - \min_{x \leq \xi_{min} \leq x + \Delta x} u''(\xi_{min}) \frac{\Delta x}{8}\]
+\[
+\frac{\partial^2 u}{\partial x^2}(x, t) = \frac{u(x + \Delta x, t) + u(x - \Delta x, t) - 2 u(x, t)}{\Delta x^2} - \frac{\Delta x^2}{12} \frac{\partial^4 u}{\partial x^4} (\xi, t), \xi \in [x - \Delta x, x + \Delta x]
+\]
 
-\begin{equation}
-	\frac{\partial^2 u}{\partial x^2}(x, t) = \frac{u(x + \Delta x, t) + u(x - \Delta x, t) - 2 u(x, t)}{\Delta x^2} - \frac{\Delta x^2}{12} \frac{\partial^2 u}{\partial x^2} (\xi, t), \xi \in [x - \Delta x, x + \Delta x]
-\end{equation}
+\[
+|erro| \leq \max_{x - \Delta x \leq \xi \leq x + \Delta x} |\frac{\Delta x^2}{12} \frac{\partial^4 u}{\partial x^4} (\xi, t)|
+\]
 
-Portanto, o erro
+Há também um termo de erro pela discretização no tempo. O desenvolvimento do polinômio de Taylor para duas variáveis não será feito por ser muito longo, mas sabemos pelas referências que para o problema modelo $\frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2} + w(x)$, o erro de truncamento local vale \cite{livro}:
+
+\[
+\frac{\Delta t}{2}\frac{\partial^2 u}{\partial t^2}(x, \mu) - \alpha^2 \frac{\Delta x^2}{12}\frac{\partial^4 u}{\partial t^4}(\xi, t), \mu \in [t, t + \Delta t], \xi \in [x, x + \Delta x]
+\]
 
 \section{Exemplos de Equações}
 Nesta seção serão apresentados diferentes exemplos de equações.
@@ -301,17 +309,14 @@ void main(void)             // ''main'' method always called first.
 }
 \end{verbatim}
 
-\section{Inserir figuras}
+% \section{Inserir figuras}
 
-\begin{figure}[htb]
-	\centering
-		\includegraphics[height=14cm]{figura}
-	\label{fig:pdsmodel}
-\end{figure}
+% \begin{figure}[htb]
+% 	\centering
+% 		\includegraphics[height=14cm]{figura}
+% 	\label{fig:pdsmodel}
+% \end{figure}
 
-%\clearpage %come�a nova p�gina
-
-Para citar referências bibliográficas~\cite{Adler89}, \cite{Carmo05}.
 
 \section{Conclusões}
 Apresentar as conclusões finais.
@@ -322,7 +327,5 @@ algum aspecto do modelo, colega que ajudou a compor alguma parte do trabalho e a
 
 \bibliographystyle{plain}
 \bibliography{bibliografia}
-
-% aqui, viriam os ap�ndices se viessem (fica como atividade descobrir como introduz�-los
 
 \end{document} %finaliza o documento

@@ -7,12 +7,14 @@ function configure
 	display('Todos os parâmetros podem ser alterados, menos α (coeficiente de');
 	display('difusão térmica), que será calculado em função de k, ρ e cp.');
 
-	while ~strcmp(key = input('Digite um parâmetro para modificar (ou Enter para sair): ', 's'), '')
+	key = input('Digite um parâmetro para modificar (ou Enter para sair): ', 's');
+	while ~strcmp(key, '')
 		value = input(sprintf('Novo valor de %s: ', key));
 		parameters.(key) = value;
+		key = input('Digite um parâmetro para modificar (ou Enter para sair): ', 's');
 	end
 
-	display(sprintf('Desses parâmetros, calcula-se alpha = %e [W * m² / J]',
+	display(sprintf('Desses parâmetros, calcula-se alpha = %e [W * m² / J]', ...
 		parameters.k / (parameters.ro * parameters.cp)));
 
 	save('parameters.mat', 'parameters');

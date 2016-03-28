@@ -1,0 +1,33 @@
+Parâmetros atuais:
+k (condutividade térmica) = 1.000000e+00 [W / (m * K)]
+ro = ρ (massa específica) = 1.000000e+00 [kg / (m³)]
+cp (calor específico) = 1.000000e+00 [J / (kg * K)]
+alpha = α (coeficiente de difusão térmica) = 1.000000e+00 [W * m² / J]
+length = Extensão da barra/placa simulada = 1.000000e-02 [m]
+subdiv = Subdivisões em uma dimensão = 1.000000e+01
+timestep = Passo de tempo = 1.000000e-04
+end_time = Tempo total de simulação = 5.000000e+00
+Todos os parâmetros podem ser alterados, menos α (coeficiente de
+difusão térmica), que será calculado em função de k, ρ e cp.
+Digite um parâmetro para modificar (ou Enter para sair): k
+Novo valor de k: 372
+Digite um parâmetro para modificar (ou Enter para sair): ro
+Novo valor de ro: 9000
+Digite um parâmetro para modificar (ou Enter para sair): cp
+Novo valor de cp: 393.5592
+Digite um parâmetro para modificar (ou Enter para sair): length
+Novo valor de length: 1
+Digite um parâmetro para modificar (ou Enter para sair): subdiv
+Novo valor de subdiv: 100
+Digite um parâmetro para modificar (ou Enter para sair):
+Desses parâmetros, calcula-se alpha = 1.050244e-04 [W * m² / J]
+Configuração escolhida:
+Parâmetros atuais:
+k (condutividade térmica) = 3.720000e+02 [W / (m * K)]
+ro = ρ (massa específica) = 9.000000e+03 [kg / (m³)]
+cp (calor específico) = 3.935592e+02 [J / (kg * K)]
+alpha = α (coeficiente de difusão térmica) = 1.050244e-04 [W * m² / J]
+length = Extensão da barra/placa simulada = 1.000000e+00 [m]
+subdiv = Subdivisões em uma dimensão = 1.000000e+02
+timestep = Passo de tempo = 1.000000e-04
+end_time = Tempo total de simulação = 5.000000e+00

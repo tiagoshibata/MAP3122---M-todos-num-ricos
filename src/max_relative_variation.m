@@ -1,5 +1,5 @@
 function relative_var = max_relative_variation(A, B)
-%RELATIVE_VARIATION Calcula a variação relativa em módulo máxima entre A e B.
+%MAX_RELATIVE_VARIATION Calcula a variação relativa em módulo máxima entre A e B.
 %	A matriz A representa estado antigo e a matriz B estado novo.
 %	Termos nulos em A e B possuem variação relativa 0. Termos nulos em um
 %	e não nulos em outro possuem variação relativa +/- 1.

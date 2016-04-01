@@ -8,5 +8,12 @@ function plot_heatmap(u, lims)
 	end
 	imagesc(u, lims);
 	colorbar;
+	if min(size(u)) ~= 1
+		ylabel('Y (m)');
+		xlabel('X (m)');
+	else
+		ylabel('Posição (m)');
+	end
+	title('Escala de temperatura');
 	drawnow limitrate;
 end

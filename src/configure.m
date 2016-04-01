@@ -2,7 +2,10 @@ function configure
 %CONFIGURE Lê configurações e muda parâmetros do modelo.
 	global parameters;
 
-	load_parameters(1);
+	if ~isempty(parameters)
+		save('parameters.mat', 'parameters');
+	end
+	load_parameters('', 1);
 
 	display('Todos os parâmetros podem ser alterados, menos α (coeficiente de');
 	display('difusão térmica), que será calculado em função de k, ρ e cp.');
@@ -19,5 +22,5 @@ function configure
 
 	save('parameters.mat', 'parameters');
 	display('Configuração escolhida:');
-	load_parameters(1);
+	load_parameters('', 1);
 end

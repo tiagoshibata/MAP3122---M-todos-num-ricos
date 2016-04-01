@@ -1,0 +1,11 @@
+parameters =
+
+           k: 1
+          ro: 1
+          cp: 1
+       alpha: 1
+        beta: 0
+      length: 5
+      subdiv: 10
+    timestep: 1
+    end_time: 4

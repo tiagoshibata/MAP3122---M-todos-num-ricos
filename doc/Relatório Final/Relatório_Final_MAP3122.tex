@@ -9,6 +9,8 @@
 \usepackage[intlimits]{amsmath}
 \usepackage{listingsutf8}
 \usepackage{float}
+\usepackage{textcomp}
+\usepackage{subcaption}
 \lstdefinestyle{MatlabCustom}{
 	language=Matlab,
 	tabsize=4,
@@ -50,11 +52,7 @@
 \include {capa}
 
 \pagestyle {empty}
-\abstract{A geração de calor está presente no dia a dia de todos os seres. Desde as perdas de energias ocorrentes na mais simples das reações biológicas, o calor muitas vezes representa a energia desperdiçada, o movimento caótico de moléculas que se dispersam do fenômeno sendo realizado.
-
-Na engenharia, a geração de calor e principalmente o aumento de temperatura têm grandes consequências, podendo criar um ambiente desagradável em uma construção mal planejada, queimar um motor ou causar danos em equipamentos. Em eletrônica, o aumento de temperatura leva circuitos a queimarem ou desligarem-se se possuírem proteção contra sobretemperatura. Neste trabalho, focamos em um modelo simples de condução de calor, em uma placa plana. A placa possuirá fontes e sorvedouros, simulando a ação de uma placa eletrônica metálica contendo componentes integrados. Algumas regiões (com componentes) serão tradadas como fontes de calor, e a placa como um todo terá uma pequena perda de calor (representando a troca de calor com o ar).
-
-Nesse trabalho, desejamos simular a condução de calor em uma barra ou placa a partir da equação de difusão de calor, aplicando métodos numéricos em soluções computacionais. Obteremos mapas de temperatura e fluxo de calor para diferentes condições e configurações. Apresentando a temperatura próxima aos componentes, podemos simular a temperatura na qual a placa final operará e tentar melhorar a disposição dos mesmos.}
+\abstract{Esse trabalho mostra modelos explícitos e implícitos de resolução da Equação Diferencial Parcial (EDP) de condução de calor para uma dimensão espacial (barra) e duas (placa), utilizando métodos numéricos aprendidos na disciplina MAP3122 - Métodos Numéricos e Aplicações.}
 
 \newpage
 
@@ -71,54 +69,74 @@ Nesse trabalho, desejamos simular a condução de calor em uma barra ou placa a 
 \parskip 5pt
 \newpage
 \section{Introdução}
+A geração de calor está presente no dia a dia de todos os seres. Desde as perdas de energias ocorrentes na mais simples das reações biológicas, o calor muitas vezes representa a energia desperdiçada, o movimento caótico de moléculas que se dispersam do fenômeno sendo realizado.
 
-%comando cria itens
-\begin{itemize}
-	\item introduzir o problema a ser estudado
-	\item apresentar trabalhos relacionados
-	\item apresentar motivação
-	\item apresentar objetivos
-	\item Último parágrafo deve conter a organização do documento
-\end{itemize}
+Na engenharia, a geração de calor e principalmente o aumento de temperatura têm grandes consequências, podendo criar um ambiente desagradável em uma construção mal planejada, queimar um motor ou causar danos em equipamentos. Em eletrônica, o aumento de temperatura leva circuitos a queimarem ou desligarem-se se possuírem proteção contra sobretemperatura. Neste trabalho, focamos em um modelo simples de condução de calor, em uma barra ou placa plana. A estrutura possuirá fontes e sorvedouros, simulando a ação de uma placa eletrônica metálica contendo componentes integrados. Algumas regiões (com componentes) serão tradadas como fontes de calor, e a placa como um todo terá uma pequena perda de calor (representando a troca de calor com o ar). Grande parte dos métodos e modelos são baseados no livro de Burden\&Faires~\cite{livro}.
 
-\section{Modelo}
-Em nosso modelo, a placa plana será discretizada em múltiplos quadrados de dimensão pequena. Cada pequeno quadrado será a menor subdivisão da placa que trataremos e possuirá uma temperatura homogênea. Nesse trabalho, os elementos serão sempre uniformes, bidimensionais e retangulares.
+Nesse trabalho, desejamos simular a condução de calor em uma barra ou placa a partir da equação de difusão de calor, aplicando métodos numéricos em soluções computacionais. Obteremos mapas de temperatura e fluxo de calor para diferentes condições e configurações. Apresentando a temperatura próxima aos componentes, podemos simular a temperatura na qual a placa final operará e tentar melhorar a disposição dos mesmos.
 
-As condições iniciais serão tomadas como temperatura homogênea em toda a placa (placa desligada e equilibrada). O calor gerado pelos componentes será tomado de seus datasheets e seu número e posições será configurável. Utiliza-se o modelo de placa bidimensional, homogênea e isotrópica, ou seja, suas propriedades não se alteram em diferentes direções ou posições e a condução térmica é constante em toda a sua extensão. Parâmetros do material necessários para o modelo são $k$ (condutividade térmica), $\rho$ (massa específica) e $c_p$ (calor específico).
+A seção ``Modelagem matemática'' descreve o modelo utilizado, indicando constantes relevantes à simulação. ``Metodologia de desenvolvimento'' relata como foi feito o desenvolvimento do trabalho. ``Métodos numéricos'' mostra detalhes do modelo, discretização utilizada e métodos aplicados. ``Resultados'' mostra verificações dos métodos e resultados adquiridos. ``Conclusões'' fecha o relatório com conclusões pessoais dos autores.
 
-Duas propriedades são de interesse nesse estudo: o fluxo de calor, que indica a passagem de energia térmica, é proporcional ao oposto do gradiente da temperatura (os operandos de u(x, y, t) foram omitidos por simplicidade) \cite{ufsc_geracao_de_calor}:
+\section{Modelagem matemática}
+Em  nosso  modelo,  a  placa ou barra  será  discretizada  em  múltiplos  segmentos  de dimensão pequena. Cada pequeno segmento será a menor subdivisão que trataremos e possuirá uma temperatura homogênea.
 
-\[q = -k A \frac{\partial u}{\partial x}\]
-Onde $u(x, t)$ é a temperatura em x no momento t e $A$ a área de contato.
+As condições iniciais foram tomadas como temperatura homogênea em toda a extensão (componentes desligados e material em equilíbrio). A temperatura ambiente e inicial da placa foram tomadas como 0; assim, se um gráfico indica 30, significa que o material aqueceu 50\textdegree C em relação ao ambiente. O calor gerado é configurável, podendo ser colocado em diferentes posições e valores. Utiliza­-se o modelo de barra unidimensional/placa  bidimensional,  homogênea  e  isotrópica,  ou  seja,  suas propriedades não  se alteram em diferentes direções ou posições e a  condução térmica é constante em toda a sua extensão. Parâmetros do material necessários para o modelo são $k$ (condutividade térmica), $\rho$ (massa específica) e $c_p$ (calor específico).
+
+Duas propriedades são de interesse nesse estudo: o fluxo de calor, que indica a passagem de energia térmica, é proporcional ao oposto do gradiente da temperatura. Estudos empiricos mostram que o fluxo de calor é proporcional à área de contato e à condutividade térmica \cite{ufsc_geracao_de_calor}:
+
+\[q = -k A \frac{\partial u(x, t)}{\partial x} $ ou $ q = -k A \nabla u(x, y, t)\]
+Onde $u$ representa a temperatura e $A$ a área de contato.
 
 Observe que o modelo físico de fluxo de calor indica que ele flui do local mais quente para o menos quente (gradiente negativo). Além disso, e mais importante, é a temperatura nos pontos da barra. A equação de difusão de calor é:
 
-\[\frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2} + w(x)\]
+\[\frac{\partial u(x, t)}{\partial t} = \alpha \frac{\partial^2 u(x, t)}{\partial x^2} + w(x) $ ou $ \frac{\partial u(x, y, t)}{\partial t} = \alpha \nabla^2 u(x, y, t) + w(x, y)\]
 
-Sendo $\alpha$ o coeficiente de difusão térmica. Para materiais homogêneos e isotrópicos, $\alpha$ é constante e vale:
+Sendo $\alpha$ chamado de coeficiente de difusão térmica e $w$ um calor recebido ou perdido externamente.
+
+Observa-se que a equação relaciona a mudança  de  temperatura  em  certo  ponto  no  tempo  com  o  laplaciano  da temperatura, ou  o  divergente  do  gradiente,  representado  por  $\nabla$. Esse valor é intuitivo  e  semelhante  a  resultados  vistos  nas  disciplinas  de  física  e electromagnetismo:  o  aumento  de  temperatura  no  ponto  é  relacionado  com  o divergente  do  fluxo  de  calor,  ou  seja,  o  calor  realmente  “ganho”,  ficando  a temperatura  constante  se  calor  ganho de um lado é perdido para outro mais frio (ou seja, primeira derivada não nula, mas segunda derivada nula). Também  indica  que  um  ponto  pode  entrar  em  equilíbrio  térmico  mesmo  se  sua temperatura for diferente da temperatura em seu entorno, se seu “lucro” de calor for nulo.
+
+A fórmula de condução de calor e o valor de $\alpha$ podem ser deduzidos a partir de outros parâmetros já citados. Em nosso modelo discretizado, podemos aproximar a derivada na interface entre dois blocos, ou seja, $\frac{\partial u(x - \frac{\Delta x}{2}, t)}{\partial x}$ e $\frac{\partial u(x + \frac{\Delta x}{2}, t)}{\partial x}$ (formas de aproximações serão mostradas na seção ``Métodos Numéricos''; por enquanto, assume-se que podemos calcular aproximações para esses valores). De posse desses valores aproximados, podemos aplicar expansão por polinômio de Taylor:
+
+\[
+\frac{\partial u(x + \frac{\Delta x}{2}, t)}{\partial x} = \frac{\partial u(x, t)}{\partial x} + \frac{\partial^2 u(x, t)}{\partial x^2} \frac{\Delta x}{2} + \frac{\partial^3 u(\xi_1, t)}{x^3} \frac{\Delta x^2}{8}, \xi_1 \in [x, x + \frac{\Delta x}{2}]
+\]
+\[
+\frac{\partial u(x - \frac{\Delta x}{2}, t)}{\partial x} = \frac{\partial u(x, t)}{\partial x} - \frac{\partial^2 u(x, t)}{\partial x^2} \frac{\Delta x}{2} + \frac{\partial^3 u(\xi_2, t)}{x^3} \frac{\Delta x^2}{8}, \xi_2 \in [x - \frac{\Delta x}{2}, x]
+\]
+
+O ganho de calor é o ``lucro'' de calor, ou seja, a diferença entre o recebido de um lado e perdido de outro. Subtraíndo as equações acima e adicionando os termos $k$ e $A$ da equação de fluxo de calor, temos:
+
+\[\Delta Q $ (calor ganho) $ = 2 k A \frac{\partial^2 u(x, t)}{\partial x^2} \frac{\Delta x}{2} = k A \frac{\partial^2 u(x, t)}{\partial x^2} \Delta x $, com $|erro| = |k A [ \frac{\partial^3 u(\xi_1, t)}{x^3} \frac{\Delta x^2}{8} - \frac{\partial^3 u(\xi_2, t)}{x^3} \frac{\Delta x^2}{8}]|\]
+
+No entanto, diferentes objetos possuem diferentes capacidades térmicas (C), que indicam quanto calor é necessário para variar sua temperatura em um grau ($\Delta u = \frac{Q}{C}$). A capacidade térmica é diretamente proporcional à massa (ou seja, se a massa dobra, precisamos do dobro de energia para aquecê-la uma mesma quantidade). Um parâmetro melhor para representar materiais é o calor específico, que possui significado semelhante à capacidade térmica, mas é invariante à massa ($c_p = \frac{C}{m}$, sendo o mesmo para um dado material, independente da massa do objeto estudado).
+
+Dentre as muitas representações possíveis, escolhemos descrever um material pelo seu calor específico e densidade. Realizando algumas mudanças de variáveis, podemos relacionar a mudança de temperatura com o calor recebido e, finalmente, encontrar o valor de $\alpha$:
+
+\[
+\frac{\partial u(x, t)}{\partial t} = \frac{\Delta Q}{C} = \frac{\Delta Q}{c_p m} = \frac{k A \Delta x}{c_p m} \frac{\partial^2 u(x, t)}{\partial x^2}
+\]
+
+No entanto, $A \Delta x$ é o volume do bloco estudado, e dividindo por m temos $\frac{1}{\rho}$, onde $\rho$ é a densidade do material. Portanto:
+
+\[
+\frac{\partial u(x, t)}{\partial t} = \frac{k}{c_p \rho} \frac{\partial^2 u(x, t)}{\partial x^2} = \alpha \frac{\partial^2 u(x, t)}{\partial x^2}
+\]
+
+Para materiais homogêneos e isotrópicos (sem mudanças de suas propriedades em nenhuma dimensão), $\alpha$ é constante e vale:
 
 \[\alpha = \frac{k}{\rho c_p}\]
 
-Foi adotado como tempo inicial o instante 0 ($t_0 = 0$).
+Note que essa definição é usada em muitas das referências consultadas \cite{ufsc_geracao_de_calor} \cite{MIT}, no entanto é diferente da usada pelo livro texto da disciplina \cite{livro}: $\frac{\partial u(x, t)}{\partial t} = \alpha^2 \frac{\partial^2 u(x, t)}{\partial x^2}$. As equações retiradas do livro texto levaram em conta trocar $\alpha^2$ por $\alpha$. A dedução de $\alpha$ para duas dimensões espaciais é semelhante e resulta no mesmo valor, sendo omitida desse trabalho. $w$ (mudança de temperatura devido à calor externo recebido) possui valor $\frac{\dot q}{\rho c_p}$, onde $\dot q$ representa o calor recebido. Sua dedução é simples seguindo os mesmos passos da dedução de $\alpha$. Foi adotado como tempo inicial o instante 0 ($t_0 = 0$) para todas as simulações.
 
 \section{Metodologia de desenvolvimento}
 O desenvolvimento foi gradual, com testes de cada parte do programa. Os diferentes métodos implementados passaram por testes unitários, onde eram comparados com implementações do sistema (implementações fornecidas pelo ambiente MATLAB/Octave). Após confirmar o funcionamento das partes, passamos a montar o programa principal. Os programas de teste chamam a implementação do trabalho e do sistema e calculam a soma de erros absolutos, mostrando-o na tela. Por exemplo, para a função de cálculo de gradiente, temos test\_grad.m (apenas partes relevantes mostradas aqui):
 
 \lstinputlisting{test_grad_simplified.m}
 
-Que resulta em valores da ordem de $10^{-16}$, atribuídos a arredondamento numérico.
-
-\section{Modelagem matemática}
-Em  nosso  modelo,  a  placa  plana  será  discretizada  em  múltiplos  quadrados  de dimensão pequena. Cada pequeno quadrado será a menor subdivisão da placa que trataremos e possuirá uma temperatura homogênea.
-
-As condições iniciais serão tomadas como temperatura homogênea em toda a placa (placa desligada e equilibrada). O calor gerado pelos componentes será tomado de seus datasheets e seu número e posições será configurável. Utiliza­se o modelo de placa  bidimensional,  homogênea  e  isotrópica,  ou  seja,  suas  propriedades não  se alteram em diferentes direções ou posições e a  condução térmica é constante em toda a sua extensão. 
- 
-O  fluxo  de  energia  térmica,  que indica locais  com grande  variação (gradiente) de temperatura, é proporcional ao inverso do gradiente da temperatura (os operandos de u(x, y, t) foram omitidos por simplicidade)
+Que resulta em valores da ordem de $10^{-16}$, atribuídos a arredondamento numérico. Após desenvolvimento de um método, o testamos por cálculo de erros em relação a uma solução manufaturada conhecida. Vale citar aos interessados em executar o código que o script $configure_parameters.m$ ajuda na configuração dos parâmetros de execução.
 
 \section{Métodos numéricos}
 Mostraremos métodos aplicados para discretizar e aproximar numericamente o problema.
-
-REESCREVER COMO del(U)/del(x)
 
 O espaço considerado é discreto (possuimos valores da função em estudo apenas em alguns pontos) e precisamos de um método de aproximar a derivada dessa função. Podemos fazê-lo calculando os primeiros termos da série de Taylor em torno de um ponto. Suponhamos que, para os pontos $x$ e $x + \Delta x$, de temperatura $u$ conhecida, desejamos aproximar a derivada no intermédio ($u'(x + \frac{\Delta x}{2})$). Sabemos que a temperatura é contínua e infinitamente derivável. Temos, por expansão em série de Taylor com resto de Lagrange em torno de $x + \frac{\Delta x}{2}$:
 \begin{equation}
@@ -139,7 +157,7 @@ Portanto podemos aproximar a derivada em um ponto médio a dois de valores conhe
 
 \[|erro| \leq |\max_{x \leq \xi_{max} \leq x + \Delta x} u''(\xi_{max}) \frac{\Delta x}{8} - \min_{x \leq \xi_{min} \leq x + \Delta x} u''(\xi_{min}) \frac{\Delta x}{8}|\]
 
-Com $\xi_{max}$ e $\xi_{min}$ como valores onde $u''$ é máximo e mínimo entre $x$ e $x + \Delta x$. Para $\frac{\Delta x}{8}$ pequeno, a aproximação será boa. Além disso, o problema de condução de calor tende a $u'' = 0$ (temperatura crescendo/decrescendo uniformemente), portanto esperamos que $u''$ seja pequeno conforme a simulação avança. O erro da simulação inclui também um erro pela discretização no tempo (pois buscamos $u(x, t + \Delta t)$, mas o polinômio de Taylor com duas dimensões não será descrito por ser muito longo.
+Com $\xi_{max}$ e $\xi_{min}$ como valores onde $u''$ é máximo e mínimo entre $x$ e $x + \Delta x$. Para $\frac{\Delta x}{8}$ pequeno, a aproximação será boa. Além disso, o problema de condução de calor tende a $u'' = 0$ (temperatura crescendo/decrescendo uniformemente), portanto esperamos que $u''$ seja pequeno conforme a simulação avança. O erro da simulação inclui também um erro pela discretização no tempo (pois buscamos $u(x, t + \Delta t)$), mas o polinômio de Taylor com duas dimensões não será descrito por ser muito longo.
 
 De posse de aproximações boas para $u'(x - \frac{\Delta x}{2})$ e $u'(x + \frac{\Delta x}{2})$, podemos calcular a derivada nos pontos de estudo ($u'(x)$) pela média entre as derivadas ($\frac{u'(x - \frac{\Delta x}{2}) + u'(x + \frac{\Delta x}{2})}{2}$). Aplicando expansão em série de Taylor $u'$ em torno de $x$, temos um sistema semelhante a \ref{expansao_taylor_derivada}:
 
@@ -163,7 +181,7 @@ Na figura \ref{fig:derivative_aprox} é mostrado um gráfico ilustrando a aproxi
 
 \begin{figure}[H]
 	\centering
-		\includegraphics[height=12cm]{derivative_aprox}
+		\includegraphics[height=10cm]{derivative_aprox}
 		\caption{Aproximação da derivada}
 		\label{fig:derivative_aprox}
 \end{figure}
@@ -186,7 +204,7 @@ De maneira similar a feira para a primeira derivada, somando as equações, rear
 \]
 
 \[
-|erro| \leq \max_{x - \Delta x \leq \xi \leq x + \Delta x} |\frac{\Delta x^2}{12} \frac{\partial^4 u}{\partial x^4} (\xi, t)|
+\frac{\partial^2 u}{\partial x^2}(x, t) = \frac{u(x + \Delta x, t) + u(x - \Delta x, t) - 2 u(x, t)}{\Delta x^2} $ com $ |erro| \leq \max_{x - \Delta x \leq \xi \leq x + \Delta x} |\frac{\Delta x^2}{12} \frac{\partial^4 u}{\partial x^4} (\xi, t)|
 \]
 
 Há também um termo de erro pela discretização no tempo. O desenvolvimento do polinômio de Taylor para duas variáveis não será feito por ser muito longo, mas sabemos pelas referências que para o problema modelo $\frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2} + w(x)$, o erro de truncamento local vale \cite{livro}:
@@ -195,135 +213,86 @@ Há também um termo de erro pela discretização no tempo. O desenvolvimento do
 \frac{\Delta t}{2}\frac{\partial^2 u}{\partial t^2}(x, \mu) - \alpha^2 \frac{\Delta x^2}{12}\frac{\partial^4 u}{\partial t^4}(\xi, t), \mu \in [t, t + \Delta t], \xi \in [x, x + \Delta x]
 \]
 
-\section{Exemplos de Equações}
-Nesta seção serão apresentados diferentes exemplos de equações.
+\section{Resultados}
 
-\subsection{Equações simples}
-
-\textbf{Sem numeração}
-\[\sum_{i=1}^{100}\frac{2^{i-1}}{4}\]
-
-\textbf{Com numeração}
-\begin{equation}
-	\int_{0}^{100}\sqrt[4]{\frac{2n}{7}}
-\end{equation}
-
-\begin{equation}
-M^{-1}(AD^{-1}A^T)M^{-T}\bar{y} = M^{-1}(AD^{-1}(r_d -X^{-1}r_a) + r_p),
-\end{equation}
-
-
-\subsection{Equações com mais de uma linha}
-\begin{eqnarray}
-\label{pp}
-\min & c^Tx \\ \nonumber
-\mbox{s.a.} & Ax=b \\ \nonumber
-            & x \geq 0, \nonumber
-\end{eqnarray}
-onde $A \in \Rmn$, $b \in \Rm$ and $c \in \Rn$.
-Referenciando a equação ~(\ref{pp})
-
-\subsection{Sistema linear}
-
-\begin{equation}
- \left[
-\begin{array}{ccc}
- A & 0   & 0 \\
- 0 & A^T & I\\
- Z & 0   & X
-\end{array} \right]
-\left[
-\begin{array}{c}
- x \\
- y \\
- z \\
-\end{array}
-\right]
-=
-\left[
-\begin{array}{c}
- 1 \\
- 2 \\
- 3
-\end{array}
-\right]
-\label{eqpc0}
-\end{equation}
+A primeira simulação realizada foi para barra, aplicando um algoritmo explícito. A partir do problema modelo e usando a aproximação da segunda derivada já desenvolvida, podemos buscar o próximo passo:
 
 \[
-d_i=\left \{
-\begin{array}{cc}
-1 & \mbox{se } i=0 \\
-2 & \mbox{caso contrário}\\
-\end{array}
-\right \}
+u(x, t + \Delta t) \approx u(x, t) + \Delta t \frac{\partial u(x, t)}{\partial t} = u(x, t) + \Delta t \alpha \frac{\partial^2 u(x, t)}{\partial x^2} \approx u(x, t) + \frac{\Delta t \alpha}{\Delta x^2} [u(x - \Delta x, t) - 2 u(x, t) + u(x + \Delta x, t)]
 \]
 
-%inicia uma nova p�gina
-\clearpage
+Montando a matriz dessa transformação em um formato $\vec u(t + \Delta t) = A * \vec u(t)$, temos uma matriz tridiagonal (cada elemento em $\vec u(t + \Delta t)$ depende de sua posição em $\vec u(t)$ e das duas vizinhas) com a qual podemos fazer uma multiplicação e encontrar o próximo passo no tempo.
 
-\section{Tabelas}
-\label{sec:tab}
+Realizamos alguns testes para buscar a corretude da implementação. Calculamos o erro numérico usando o método da solução manufaturada conhecida. A solução escolhida foi a dada no livro texto \cite{livro}, $u(x, t) = e^(-\pi^2 t)sin(\pi x)$. Tivemos muitos problemas devido ao intervalo de estabilidade do método; ele é condicionalmente estável e em muitos casos testados seu comportamento foi instável, oscilando e tendendo a infinito (figura \ref{fig:diverge_sol_manufaturada_expl}).
 
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{sol_manufaturada_divergindo}
+		\caption{Solução numérica divergindo}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{sol_manufaturada_convergindo}
+		\caption{Solução numérica convergindo}
+	\end{subfigure}
+	\caption{Diferentes etapas do teste por solução manufaturada}
+	\label{fig:diverge_sol_manufaturada_expl}
+\end{figure}
 
-\subsection{Tabela Simples}
+Montando tabela com erros médios para variação no passo de tempo, obtivemos os seguintes erros globais ao executar uma simulação do início ao fim (parâmetros usados estão em parameters\_exact\_senoid.mat e resultados podem ser vistos executando show\_explicit\_error.m):
+
 \begin{table}[htb]
 \begin{center}
 		\begin{tabular}{|c|c|c|}\hline
-		12  & 13 & 14 \\\hline
-		15  & 16 & 17 \\\hline
+			Passo no tempo & Erro asocciado \\\hline
+			5.000000e-04 & 3.082351e+04 \\\hline
+			2.500000e-04 & 2.818915e-01 \\\hline
+			1.250000e-04 & 2.127182e-01 \\\hline
+			6.250000e-05 & 1.787781e-01 \\\hline
+			3.125000e-05 & 1.621413e-01 \\\hline
+			1.562500e-05 & 1.540372e-01 \\\hline
+			7.812500e-06 & 1.501008e-01 \\\hline
+			3.906250e-06 & 1.492907e-01 \\\hline
+			1.953125e-06 & 1.504369e-01 \\\hline
 		\end{tabular}
-\label{tab:Tabela1}
-\caption{Título da tabela}
+\caption{Erros globais do método explícito}
 \end{center}
 \end{table}
 
+O primeiro valor corresponde a uma configuração onde o método divergiu. Para as outras, observamos que o método tende à solução exata. No entanto, diminuindo mais $\Delta t$, seu erro não continuou caindo, provavelmente devido a erros da discretização no espaço (o erro de truncação local é da ordem $O(\Delta t + \Delta x^2)$, não dependendo apenas do tempo e tendo algum erro mesmo para $\Delta t$ muito pequeno).
 
-\subsection{Tabela mais elaborada}
+O erro de truncação local observado após um passo vale:
+
 \begin{table}[htb]
 \begin{center}
-\begin{tabular}{|l|r|c|r|r|} \hline
-            & \multicolumn{2}{|c|}{{CCF preconditioner}} & \multicolumn{2}{|c|}{{Number of nonzeros}} \\ \cline{2-5}
-{Problem}   & \multicolumn{1}{|c|}{$\eta$}  & \multicolumn{1}{|c|}{$ \frac{n(AD^{-1}A^T)}{nrow}$} & \multicolumn{1}{|c|}{FCC} & \multicolumn{1}{|c|}{Cholesky}  \\ \hline \hline
-ELS-19    &  -11 & 31 &  87750  & 3763686  \\\hline
-SCR20     &  -12 & 31 &  103179 & 2591752  \\\hline
-NUG15     &  -12 & 32 &  54786  & 6350444 \\\hline
-PDS-20    &   15 & 5  &  625519 & 7123636\\\hline
-\end{tabular}
-\caption{Título da Tabela.}
-\label{tabn}
+		\begin{tabular}{|c|c|c|c}\hline
+			Passo no tempo & Erro de truncação local & Razão entre erros (r) & $log_2$(r) \\\hline
+			6.250000e-05 & 3.931024e-03 & 1.9969 & 0.9978\\\hline
+			3.125000e-05 & 1.968537e-03 & 1.9985 & 0.9989 \\\hline
+			1.562500e-05 & 9.850251e-04 & 1.9992 & 0.9994\\\hline
+			7.812500e-06 & 4.927017e-04 & 1.9996 & 0.9997\\\hline
+			3.906250e-06 & 2.463981e-04 & 1.9998 & 0.9999\\\hline
+			1.953125e-06 & 1.232109e-04 & 1.9999 & 0.9999\\\hline
+			9.765625e-07 & 6.160840e-05 & 2.0000 & 1.0000\\\hline
+			4.882813e-07 & 3.080494e-05 & 2.0000 & 1.0000 \\\hline
+			2.441406e-07 & 1.540265e-05 & 2.0000 & 1.0000 \\\hline
+			1.220703e-07 & 7.701373e-06 & 2.0000 & 1.0000 \\\hline
+			6.103516e-08 & 3.850698e-06 & 2.0000 & 1.0000 \\\hline
+			3.051758e-08 & 1.925352e-06 & 2.0000 & 1.0000 \\\hline
+		\end{tabular}
+\caption{Erros de truncação local do método explícito}
 \end{center}
 \end{table}
 
-Referenciando a tabela~\ref{tabn}.
-
-\section{Edição}
-
-Comando para preservar a formatação do texto.
-\begin{verbatim}
-#include <iostream>         // < > is used for standard libraries.
-void main(void)             // ''main'' method always called first.
-{
- cout << ''This is a message.'';
-                            // Send to output stream.
-}
-\end{verbatim}
-
-% \section{Inserir figuras}
-
-% \begin{figure}[htb]
-% 	\centering
-% 		\includegraphics[height=14cm]{figura}
-% 	\label{fig:pdsmodel}
-% \end{figure}
-
+O método mostra ordem um no erro de truncação local para $\Delta t$.% Para $\Delta x$, 
 
 \section{Conclusões}
 Apresentar as conclusões finais.
 
 \vspace{5mm}
-{\bf{Agradecimentos}} Agradecimentos aos colaboradores, professores que eventualmente procuraram para ajudar em
-algum aspecto do modelo, colega que ajudou a compor alguma parte do trabalho e assim por diante.
+{\bf{Agradecimentos}} Agradeçemos ao professor Alexandre Roma pelo apoio e incentivo ao trabalho.
 
 \bibliographystyle{plain}
 \bibliography{bibliografia}

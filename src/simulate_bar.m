@@ -1,24 +1,18 @@
-function simulate_bar
+function simulate_bar(simulation_function, Y, w)
 %SIMULATE_BAR Programa principal que realiza a simulação de uma barra.
+%	Recebe como parâmetro uma referência a função do tipo f(Y, t, w),
+%	Y inicial e w.
+
 	global parameters;
 
-	dl = parameters.length / parameters.subdiv;
-	lambda = parameters.alpha ^ 2 * parameters.timestep / (dl ^ 2);
-
-	bar = zeros(parameters.subdiv, 1);
-	bar(5) = 10;
-
-	unit_bar = ones(parameters.subdiv, 1);
-	A = build_tridiagonal(lambda * unit_bar, 1 - 2 * lambda * unit_bar, lambda * unit_bar);
-
-	for t = 0:parameters.timestep:(parameters.end_time + parameters.timestep)
+	for t = 0:parameters.timestep:parameters.end_time
 		display(sprintf('t = %d\n', t));
 
-		bar = A * bar;
+		Y = feval(simulation_function, Y, t, w);
 
 		figure(1);
-		plot_heatmap(bar);
+		plot_heatmap(Y);
 		figure(2);
-		plot_flow(bar);
+		plot_flow(Y);
 	end
 end

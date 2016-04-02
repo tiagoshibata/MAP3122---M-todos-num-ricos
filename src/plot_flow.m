@@ -8,15 +8,19 @@ function plot_flow(M)
 		[x, y] = meshgrid(1:20, 1:l);
 		image = quiver(x, y, zeros(l, 20), repmat(M, 1, 20));
 		% set(image, 'maxheadsize', 0.8);
+		ylabel('Posição (m)');
 	else
 		% matriz
-		[x, y] = meshgrid(size(M) - [1 1]);
-		[dM_dx, dM_dy] = -grad(M);
+		[x, y] = meshgrid(0:1:length(M) - 1);
+		[dM_dx, dM_dy] = grad(-M);
 		hold on;
 		quiver(dM_dx, dM_dy);
-		contour(x, y, M);
+		% contour(x, y, M);
 		hold off;
+		ylabel('Y (m)');
+		xlabel('X (m)');
 	end
+	title('Fluxo de calor');
 	axis ij;	% desenhar com 0 no topo (convenção de enumerar vetor de
 				% cima para baixo)
 	[m, n] = size(x);

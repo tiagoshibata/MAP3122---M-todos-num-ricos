@@ -36,25 +36,23 @@ function show_explicit_error(method)
 	
 	load_parameters('parameters_exact_senoid', 1);
 	display('Formato: divisões erro_médio');
-	parameters.subdiv = 1024;
-	% parameters.timestep = 1e-2;
+	parameters.subdiv = 2;
+	parameters.timestep = 1e-4;
 	parameters.end_time = 1;
 	
 	for i = 1:12
 		dl = parameters.length / parameters.subdiv;
 		Y = 0:dl:(parameters.length - dl);
 		Y = 100 * sin(pi * Y(:));
-		for t = 0:parameters.timestep:parameters.end_time
+		%for t = 0:parameters.timestep:parameters.end_time
 			Y = feval(method, Y, t, zero_bar());
-			plot(Y);
-			drawnow limitrate;
-			if max(Y) - min(Y) > 1e5
-				display('Divergindo');
-				continue
-			end
-		end
-		exact = exact_senoid(0, parameters.end_time, 0);
+			%if max(Y) - min(Y) > 1e5
+			%	display('Divergindo');
+			%	continue
+			%end
+		%end
+		exact = exact_senoid(0, parameters.timestep, 0);
 		display(sprintf('%d %d\n', parameters.subdiv, mean(abs(exact - Y))));
-		parameters.subdiv = parameters.subdiv / 2;
+		parameters.subdiv = parameters.subdiv * 2;
 	end
 end

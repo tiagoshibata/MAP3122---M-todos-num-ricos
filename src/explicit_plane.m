@@ -6,9 +6,16 @@ function Y = explicit_plane(Y, t, w)
 	dl = parameters.length / parameters.subdiv;
 	lambda = parameters.alpha * parameters.timestep / (dl ^ 2);
 
-	unit_bar = ones(parameters.subdiv, 1);
-	A = build_tridiagonal(lambda * unit_bar, 1 - 2 * lambda * unit_bar, lambda * unit_bar);
-	Y = Y(:);
+	% n2 guarda subdivisões ao quadrado = dimensão da matriz expandida
+	n = length(Y);
+	n2 = n ^ 2;
+	unit_bar = ones(n2, 1);
+	A = build_tridiagonal(lambda * unit_bar, 1 - 4 * lambda * unit_bar, lambda * unit_bar);
 
-	Y = A * Y + (parameters.timestep * w) - Y * parameters.timestep * parameters.beta;
+	% Condução em Y:
+	A = A + lambda * [zeros(n2, n) eye(n2, n2 - n)];
+	A = A + lambda * [zeros(n, n2) ; eye(n2 - n, n2)];
+
+	Y = A * Y(:) + (n * w(:)) - Y(:) * parameters.timestep * parameters.beta;
+	Y = reshape(Y, n, n);
 end

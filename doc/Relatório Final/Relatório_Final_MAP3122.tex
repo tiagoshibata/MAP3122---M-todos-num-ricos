@@ -75,7 +75,7 @@ Na engenharia, a geração de calor e principalmente o aumento de temperatura t�
 
 Nesse trabalho, desejamos simular a condução de calor em uma barra ou placa a partir da equação de difusão de calor, aplicando métodos numéricos em soluções computacionais. Obteremos mapas de temperatura e fluxo de calor para diferentes condições e configurações. Apresentando a temperatura próxima aos componentes, podemos simular a temperatura na qual a placa final operará e tentar melhorar a disposição dos mesmos.
 
-A seção ``Modelagem matemática'' descreve o modelo utilizado, indicando constantes relevantes à simulação. ``Metodologia de desenvolvimento'' relata como foi feito o desenvolvimento do trabalho. ``Métodos numéricos'' mostra detalhes do modelo, discretização utilizada e métodos aplicados. ``Resultados'' mostra verificações dos métodos e resultados adquiridos. ``Conclusões'' fecha o relatório com conclusões pessoais dos autores.
+A seção ``Modelagem matemática'' descreve o modelo utilizado, indicando constantes relevantes à simulação. ``Metodologia de desenvolvimento'' relata como foi feito o desenvolvimento do trabalho. ``Métodos numéricos'' mostra detalhes do modelo, discretização utilizada e métodos aplicados. ``Resultados'' mostra verificações dos métodos e resultados adquiridos. Por espaço no relatório, o ordem de convergência será verificada pelo método das soluções manufaturadas apenas para um método (método explícito para barra). ``Conclusões'' fecha o relatório com conclusões pessoais dos autores.
 
 \section{Modelagem matemática}
 Em  nosso  modelo,  a  placa ou barra  será  discretizada  em  múltiplos  segmentos  de dimensão pequena. Cada pequeno segmento será a menor subdivisão que trataremos e possuirá uma temperatura homogênea.
@@ -133,7 +133,7 @@ O desenvolvimento foi gradual, com testes de cada parte do programa. Os diferent
 
 \lstinputlisting{test_grad_simplified.m}
 
-Que resulta em valores da ordem de $10^{-16}$, atribuídos a arredondamento numérico. Após desenvolvimento de um método, o testamos por cálculo de erros em relação a uma solução manufaturada conhecida. Vale citar aos interessados em executar o código que o script $configure_parameters.m$ ajuda na configuração dos parâmetros de execução.
+Que resulta em valores da ordem de $10^{-16}$, atribuídos a arredondamento numérico. Após desenvolvimento de um método, o testamos por cálculo de erros em relação a uma solução manufaturada conhecida. O código que o script $configure\_parameters.m$ ajuda na configuração dos parâmetros de execução.
 
 \section{Métodos numéricos}
 Mostraremos métodos aplicados para discretizar e aproximar numericamente o problema.
@@ -221,9 +221,9 @@ A primeira simulação realizada foi para barra, aplicando um algoritmo explíci
 u(x, t + \Delta t) \approx u(x, t) + \Delta t \frac{\partial u(x, t)}{\partial t} = u(x, t) + \Delta t \alpha \frac{\partial^2 u(x, t)}{\partial x^2} \approx u(x, t) + \frac{\Delta t \alpha}{\Delta x^2} [u(x - \Delta x, t) - 2 u(x, t) + u(x + \Delta x, t)]
 \]
 
-Montando a matriz dessa transformação em um formato $\vec u(t + \Delta t) = A * \vec u(t)$, temos uma matriz tridiagonal (cada elemento em $\vec u(t + \Delta t)$ depende de sua posição em $\vec u(t)$ e das duas vizinhas) com a qual podemos fazer uma multiplicação e encontrar o próximo passo no tempo.
+Montando a matriz dessa transformação em um formato $\vec u(t + \Delta t) = A * \vec u(t)$, temos uma matriz tridiagonal (cada elemento em $\vec u(t + \Delta t)$ depende de sua posição em $\vec u(t)$ e das duas vizinhas) com a qual podemos fazer uma multiplicação e encontrar o próximo passo no tempo. As condições de contorno tomadas foram nulas (sem troca com o exterior da barra nas pontas).
 
-Realizamos alguns testes para buscar a corretude da implementação. Calculamos o erro numérico usando o método da solução manufaturada conhecida. A solução escolhida foi a dada no livro texto \cite{livro}, $u(x, t) = e^(-\pi^2 t)sin(\pi x)$. Tivemos muitos problemas devido ao intervalo de estabilidade do método; ele é condicionalmente estável e em muitos casos testados seu comportamento foi instável, oscilando e tendendo a infinito (figura \ref{fig:diverge_sol_manufaturada_expl}).
+Realizamos alguns testes para buscar a corretude da implementação. Calculamos o erro numérico usando o método da solução manufaturada conhecida. A solução escolhida foi a dada no livro texto \cite{livro}, $u(x, t) = e^(-\pi^2 t)sin(\pi x)$. Tivemos muitos problemas devido ao intervalo de estabilidade do método; ele é condicionalmente estável e em muitos casos testados seu comportamento foi instável, oscilando e tendendo a infinito (figura \ref{fig:diverge_sol_manufaturada_expl}). Seguindo \cite{livro}, temos que o intervalo de convergência para o problema modelo ocorre em $\alpha^2 \frac{k}{h^2} \leq \frac{1}{2}$.
 
 \begin{figure}[H]
 	\centering
@@ -261,21 +261,21 @@ Montando tabela com erros médios para variação no passo de tempo, obtivemos o
 \end{center}
 \end{table}
 
-O primeiro valor corresponde a uma configuração onde o método divergiu. Para as outras, observamos que o método tende à solução exata. No entanto, diminuindo mais $\Delta t$, seu erro não continuou caindo, provavelmente devido a erros da discretização no espaço (o erro de truncação local é da ordem $O(\Delta t + \Delta x^2)$, não dependendo apenas do tempo e tendo algum erro mesmo para $\Delta t$ muito pequeno).
+O primeiro valor corresponde a uma configuração onde o método divergiu. Para as outras, observamos que o método tende à solução exata. No entanto, diminuindo mais $\Delta t$, seu erro não continuou caindo, provavelmente devido a erros da discretização no espaço (o erro de truncação local é da ordem $O(\Delta t + \Delta x^2)$, como indicado na seção ``Métodos Numéricos'', não dependendo apenas do tempo e tendo algum erro mesmo para $\Delta t$ muito pequeno).
 
 O erro de truncação local observado após um passo vale:
 
 \begin{table}[htb]
 \begin{center}
-		\begin{tabular}{|c|c|c|c}\hline
+		\begin{tabular}{|c|c|c|c|}\hline
 			Passo no tempo & Erro de truncação local & Razão entre erros (r) & $log_2$(r) \\\hline
-			6.250000e-05 & 3.931024e-03 & 1.9969 & 0.9978\\\hline
-			3.125000e-05 & 1.968537e-03 & 1.9985 & 0.9989 \\\hline
-			1.562500e-05 & 9.850251e-04 & 1.9992 & 0.9994\\\hline
-			7.812500e-06 & 4.927017e-04 & 1.9996 & 0.9997\\\hline
-			3.906250e-06 & 2.463981e-04 & 1.9998 & 0.9999\\\hline
-			1.953125e-06 & 1.232109e-04 & 1.9999 & 0.9999\\\hline
-			9.765625e-07 & 6.160840e-05 & 2.0000 & 1.0000\\\hline
+			6.250000e-05 & 3.931024e-03 & - & - \\\hline
+			3.125000e-05 & 1.968537e-03 & 1.9969 & 0.9978\\\hline
+			1.562500e-05 & 9.850251e-04 & 1.9985 & 0.9989 \\\hline
+			7.812500e-06 & 4.927017e-04 & 1.9992 & 0.9994\\\hline
+			3.906250e-06 & 2.463981e-04 & 1.9996 & 0.9997\\\hline
+			1.953125e-06 & 1.232109e-04 & 1.9998 & 0.9999\\\hline
+			9.765625e-07 & 6.160840e-05 & 1.9999 & 0.9999\\\hline
 			4.882813e-07 & 3.080494e-05 & 2.0000 & 1.0000 \\\hline
 			2.441406e-07 & 1.540265e-05 & 2.0000 & 1.0000 \\\hline
 			1.220703e-07 & 7.701373e-06 & 2.0000 & 1.0000 \\\hline
@@ -286,10 +286,149 @@ O erro de truncação local observado após um passo vale:
 \end{center}
 \end{table}
 
-O método mostra ordem um no erro de truncação local para $\Delta t$.% Para $\Delta x$, 
+O método mostra ordem um no erro de truncação local para $\Delta t$. Passamos a escolher apenas intervalos onde o método converge. Convergência foi testada pela diferença máxima entre temperatura máxima e mínima (se maior que $10^5$, assume-se que o método está divergindo). Apenas um pequeno intervalo de $\Delta x$ mostrou convergência com os parâmetros escolhidos.
+
+\begin{table}[htb]
+\begin{center}
+		\begin{tabular}{|c|c|c|c|}\hline
+			Subdivisões do espaço & Erro de truncação local & Razão entre erros (r) & $log_2$(r) \\\hline
+			128 & 1.48E-01 & - & - \\\hline
+			64 & 2.96E-01 & 1.9928891764 & 0.9949 \\\hline
+			32 & 5.83E-01 & 1.9699041496 & 0.9781 \\\hline
+			16 & 1.09E+00 & 1.8742529782 & 0.9063 \\\hline
+			8 & 1.56E+00 & 1.4303795961 & 0.5164 \\\hline
+			4 & 9.69E+00 & 6.2020540534	& 2.6327 \\\hline
+			2 & 4.26E+01 & 4.3980563901	& 2.1369 \\\hline
+		\end{tabular}
+\caption{Erros de truncação local do método explícito}
+\end{center}
+\end{table}
+
+Podemos observar que o erro global do método tende à ordem 1 para número de subdivisões grande o suficiente, indicando erro de truncação local de ordem 2. Realizamos algumas simulações e observamos os resultados:
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[height=10cm]{convergindo}
+		\caption{Solução convergindo, parâmetros de Cobre e fonte de calor no topo}
+\end{figure}
+
+O fluxo foi desenhado calculando o gradiente e usando a função quiver(), que desenha um conjunto de setas. Na seguinte figura, as setas se sobrepõe e dificultam um pouco a visualização, mas observando a imagem original percebemos que as setas apontam para fora da região mais quente.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[height=10cm]{fluxo}
+		\caption{Fluxo de calor}
+\end{figure}
+
+Testamos a implementação explícita para um plano. O estado do sistema é mantido em uma matriz nxn. A cada passo, a matriz é expandida em um vetor $n^2$x1, que será multiplicado por uma matriz com elementos nulos em todas as posições, exceto nos seus vizinhos (duas diagonais vizinhas às principais e duas diagonais distantes n elementos da principal, posição onde se encontram o bloco superior e inferior da placa). Iniciamos com uma matriz contendo um quadrado central mais quente. Pudemos observar alguns fenômonos do calor claramente (fluxo na interface entre as partes quente e fria e equilíbrio no interior).
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{plano_inicial}
+		\caption{Estado inicial}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{plano_fluxo_inicial}
+		\caption{Fluxo inicial}
+	\end{subfigure}
+	\caption{Estado inicial da simulação realizada em plano}
+\end{figure}
+
+Após um segundo, temos:
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{temp_placa_segundos}
+		\caption{Temperatura em um segundo simulado}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{fluxo_placa_segundos}
+		\caption{Fluxo após um segundo simulado}
+	\end{subfigure}
+	\caption{Estado inicial da simulação realizada em plano}
+\end{figure}
+
+Apresentamos agora um método implícito, absolutamente estável. Tomando a equação $\frac{\partial u(x, t)}{\partial t} = \alpha \frac{\partial^2 u(x, t)}{\partial x^2} + w(x)$ e substituindo $\frac{\partial u(x, t)}{\partial t}$ pela diferença na temperatura entre dois passos dividido por $\Delta t$ e a segunda derivada pela aproximação deduzida na seção ``Métodos Numéricos'', temos:
+
+\[
+\frac{u(x, t + \Delta t) - u(x, t)}{\Delta t} - \alpha \frac{u(x - \Delta x, t) - 2 u(x, t) + u(x + \Delta x, t)}{\Delta x^2} = 0
+\]
+
+De onde obtemos a seguinte relação, onde A é a mesma matriz da resolução explícita:
+
+\[
+A * u(x, t + \Delta t) \approx u(x, t)
+\]
+
+Como A é tridiagonal, aplicaremos o algoritmo de Thomas para resolver o sistema. Testamos com passos de tempo largos e a simulação convergiu. Para variar o teste, começamos com estado inicial da barra aquecida em uma região próxima ao topo e uma fonte de calor no centro da barra. Esperamos que o calor concentrado na região aquecida inicialmente se disperse e surja um gradiente partindo do centro da barra.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{implicito_temp_inicio}
+		\caption{Temperatura}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{implicito_fluxo_inicio}
+		\caption{Fluxo}
+	\end{subfigure}
+	\caption{Estado após uma iteração do modelo implícito para barra}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{implicito_temp_real_inicio}
+		\caption{Temperatura}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.99\linewidth]{implicito_fluxo_fim}
+		\caption{Fluxo}
+	\end{subfigure}
+	\caption{Estado para o qual o sistema convergiu}
+\end{figure}
+
+Por fim, calculamos um spline para aproximar uma função contínua passando pelos pontos que a simulação gerou. Testamos a função spline do MATLAB em uma função do terceiro grau usando condições de contorno (segunda derivada nas bordas) do polinômio. A função deve retornar os mesmos coeficientes da função. Como MATLAB não retorna diretamente os coeficientes do polinômio, mas realiza um deslocamento de cada intervalo para calcular \cite{splines}, verificamos manualmente os coeficientes retornados e eles eram os mesmos do polinômio. Fizemos também um programa que calcula pontos intermediários aos pontos do polinômio dados à função splines e compara com o valor real e os erros foram negligíveis (da ordem de $10^{-15}$):
+
+\begin{verbatim}
+function test_spline()
+%TEST_SPLINE Testa spline aplicando em um polinômio do terceiro grau
+%com condições de contorno (segunda derivada nos extremos) iguais à do
+%polinômio
+	x = 0:1:10;
+
+	y = [2	x .* x .* x + x .* x + x	62];
+
+	pp = spline(x, y(2:end-1));
+	pp.coefs
+	x = 0:0.1:10;
+
+	error = ppval(pp, x) - (x .* x .* x + x .* x + x);
+
+	display(mean(error));
+end
+\end{verbatim}
+
+Tomamos o resultado da última simulação e aplicamos splines para encontrar uma solução contínua.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[height=10cm]{splines2}
+		\caption{Solução encontrada e spline}
+\end{figure}
 
 \section{Conclusões}
-Apresentar as conclusões finais.
+Pudemos observar diferentes métodos de simular o mesmo fenômeno para 1 ou 2 dimensões. Vimos a dificuldade em utilizar o método condicionalmente convergente, que necessita de escolhas bastante restritas de passos de tempo pequenos para convergir. Em simulações com o método absolutamente convergente pudemos escolher passos de tempo muito maiores e resultados foram muito mais rápidos. Aplicamos muitos métodos da disciplina e treinamos o que aprendemos em aula.
 
 \vspace{5mm}
 {\bf{Agradecimentos}} Agradeçemos ao professor Alexandre Roma pelo apoio e incentivo ao trabalho.
